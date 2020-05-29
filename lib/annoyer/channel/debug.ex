@@ -1,4 +1,4 @@
-defmodule DebugChannel do
+defmodule Annoyer.Channel.Debug do
     use Annoyer.Channel
 
     filter Annoyer.Filter.TextManipulate, prepend: "Hello, ", append: " and World"
