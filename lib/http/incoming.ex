@@ -2,6 +2,11 @@ defmodule Annoyer.Http.RootPlug do
     use Plug.Router
     require Logger
 
+    if Mix.env == :dev do
+        use Plug.Debugger
+    end
+    use Plug.ErrorHandler
+
     plug Plug.Logger
     plug :match
     plug :dispatch
@@ -13,14 +18,18 @@ defmodule Annoyer.Http.RootPlug do
     end
 
     get "/" do
-        conn |> put_resp_content_type("text/plain") |> send_resp(200, "Hello World")
+        conn |> put_resp_content_type("text/plain") |> send_resp(200, "Hello from Annoyer")
     end
 
-    post "/echo" do
-        conn |> send_resp(200, Jason.encode!(conn.body_params)) # TODO doesn't work! Cant encode arbitrary data!
+    post "/send/:topic" do
+        conn |> put_resp_content_type("text/plain") |> send_resp(200, "To channel #{topic}")
     end
 
     match _ do
         send_resp(conn, 404, "Not found!")
+    end
+
+    defp handle_errors(conn, %{kind: _kind, reason: _reason, stack: _stack}) do
+        send_resp(conn, conn.status, "Something went wrong")
     end
 end
