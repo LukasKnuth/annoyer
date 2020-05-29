@@ -21,8 +21,13 @@ defmodule Annoyer.Http.RootPlug do
         conn |> put_resp_content_type("text/plain") |> send_resp(200, "Hello from Annoyer")
     end
 
-    post "/send/:topic" do
-        conn |> put_resp_content_type("text/plain") |> send_resp(200, "To channel #{topic}")
+    post "/send/:topic/:message" do # todo message via body
+        annoyence = %Annoyer.Annoyence{topic: topic, content: message}
+        case Annoyer.Router.process_incoming(annoyence) do
+            :ok -> conn |> put_resp_content_type("text/plain") |> send_resp(200, "Sent to #{topic}")
+            :unknown -> conn |> put_resp_content_type("text/plain") |> send_resp(404, "Unknown topic #{topic}")
+            _ -> conn |> put_resp_content_type("text/plain") |> send_resp(500, "Internal Error")
+        end
     end
 
     match _ do
