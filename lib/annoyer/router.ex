@@ -13,8 +13,8 @@ defmodule Annoyer.Router do
 
     ### CLIENT CODE
 
-    def start_link(_) do
-        GenServer.start_link(__MODULE__, :ok)
+    def start_link(default) do
+        GenServer.start_link(__MODULE__, default, name: Annoyer.Router)
     end
 
     def do_something(pid) do
