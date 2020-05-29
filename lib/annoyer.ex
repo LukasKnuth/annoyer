@@ -7,7 +7,7 @@ defmodule Annoyer do
       Annoyer.Router,
       {Plug.Cowboy, scheme: :http, plug: Annoyer.Http.RootPlug, options: [port: 8080]}
     ]
+
     Supervisor.start_link(children, strategy: :one_for_one)
   end
-
 end

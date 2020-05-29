@@ -1,8 +1,6 @@
 defmodule Annoyer.Annoyence do
-
-    defstruct(
-        topic: "info",
-        content: ""
-    )
-
+  defstruct(
+    topic: "info",
+    content: ""
+  )
 end

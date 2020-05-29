@@ -1,10 +1,9 @@
 defmodule Annoyer.Channel.Second do
   use Annoyer.Channel
 
-  topic "info"
+  topic("info")
 
-  filter Annoyer.Filter.TextManipulate, prepend: "Second: "
+  filter(Annoyer.Filter.TextManipulate, prepend: "Second: ")
 
-  outgoing Annoyer.Outgoing.Console
-
+  outgoing(Annoyer.Outgoing.Console)
 end

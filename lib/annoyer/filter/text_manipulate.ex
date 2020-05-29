@@ -1,9 +1,8 @@
 defmodule Annoyer.Filter.TextManipulate do
-
   def filter(params, annoyence) when is_list(params) do
     # Parameter-list to map, let matching to the rest
     params
-    |> Map.new
+    |> Map.new()
     |> filter(annoyence)
   end
 
@@ -23,5 +22,4 @@ defmodule Annoyer.Filter.TextManipulate do
     # Ends the chain of recursive calls from above.
     annoyence
   end
-
 end

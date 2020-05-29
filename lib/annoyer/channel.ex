@@ -1,5 +1,4 @@
 defmodule Annoyer.Channel do
-
   @doc "Imports any necessary modules for simple usage."
   defmacro __using__(_opts) do
     quote do
@@ -28,8 +27,9 @@ defmodule Annoyer.Channel do
       unless Code.ensure_loaded?(unquote(implementation)) do
         raise "The specified filter module couldn't be loaded"
       end
+
       unless function_exported?(unquote(implementation), :filter, 2) do
-         raise "The specified filter module does not have the required filter/2 function!"
+        raise "The specified filter module does not have the required filter/2 function!"
       end
 
       # Prepend this filter (Note: No = sign!)
@@ -43,6 +43,7 @@ defmodule Annoyer.Channel do
       unless Code.ensure_loaded?(unquote(implementation)) do
         raise "The specified outgoing module couldn't be loaded"
       end
+
       unless function_exported?(unquote(implementation), :output, 2) do
         raise "The specified outgoing module does not have the required output/2 function!"
       end
@@ -63,11 +64,14 @@ defmodule Annoyer.Channel do
 
       def __process_channel__(annoyence) do
         # Execute all filters
-        filtered = Enum.reduce(@filters_reversed, annoyence, fn {filter, params}, acc -> filter.filter(params, acc) end)
+        filtered =
+          Enum.reduce(@filters_reversed, annoyence, fn {filter, params}, acc ->
+            filter.filter(params, acc)
+          end)
+
         # Execute all outgoings
         Enum.each(@outgoings, fn {out, params} -> out.output(params, filtered) end)
       end
     end
   end
-
 end

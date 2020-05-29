@@ -1,0 +1,15 @@
+# Configure the editor to keep a format similar to what "mix format" creates
+
+# This is the root config (configs for specific sub-directories can override this!)
+root = true
+
+# Every file
+[*]
+charset = utf-8
+
+# Elixir and Elixir scripts (tests)
+[*.{ex,exs}]
+indent_style = space
+indent_size = 2
+insert_final_newline = true
+trim_trailing_whitespace = true
