@@ -6,6 +6,7 @@ defmodule Annoyer.Channel do
       import Annoyer.Channel
 
       # Save filters and outgoings in module attributes
+      @topics []
       @filters []
       @outgoings []
 
@@ -13,6 +14,12 @@ defmodule Annoyer.Channel do
       @before_compile Annoyer.Channel
 
       # Todo code-style: Create behaviour for Outgoing and Filter! says "Filter accepts map of arguemnts"
+    end
+  end
+
+  defmacro topic(name) do
+    quote location: :keep do
+      @topics [unquote(name) | @topics]
     end
   end
 
@@ -49,6 +56,10 @@ defmodule Annoyer.Channel do
   defmacro __before_compile__(_env) do
     quote location: :keep do
       @filters_reversed Enum.reverse(@filters)
+
+      def __subscribed_topics__ do
+        @topics
+      end
 
       def __process_channel__(annoyence) do
         # Execute all filters
