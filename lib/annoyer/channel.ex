@@ -2,7 +2,7 @@ defmodule Annoyer.Channel do
   @doc "Imports any necessary modules for simple usage."
   defmacro __using__(_opts) do
     quote do
-      import Annoyer.Channel
+      import Annoyer.{Channel, Annoyence, Filter, Outgoing}
 
       # Save filters and outgoings in module attributes
       @topics []
@@ -11,8 +11,6 @@ defmodule Annoyer.Channel do
 
       # Generate the final "__process_channel__"-method
       @before_compile Annoyer.Channel
-
-      # Todo code-style: Create behaviour for Outgoing and Filter! says "Filter accepts map of arguemnts"
     end
   end
 
