@@ -18,12 +18,11 @@ defmodule Annoyer.Channel do
 
   defmacro filter(implementation, parameters \\ []) do
     quote location: :keep do
-      case Code.ensure_loaded(unquote(implementation)) do
-        {:error, reason} -> raise "The specified module couldn't be loaded: #{reason}"
-        _ -> :ok # Wonderful.
+      unless Code.ensure_loaded?(unquote(implementation)) do
+        raise "The specified filter module couldn't be loaded"
       end
       unless function_exported?(unquote(implementation), :filter, 2) do
-         raise "The specified module does not have the required filter/2 function!"
+         raise "The specified filter module does not have the required filter/2 function!"
       end
 
       # Prepend this filter (Note: No = sign!)
@@ -34,12 +33,11 @@ defmodule Annoyer.Channel do
 
   defmacro outgoing(implementation, parameters \\ []) do
     quote location: :keep do
-      case Code.ensure_loaded(unquote(implementation)) do
-        {:error, reason} -> raise "The specified module couldn't be loaded: #{reason}"
-        _ -> :ok # Wonderful.
+      unless Code.ensure_loaded?(unquote(implementation)) do
+        raise "The specified outgoing module couldn't be loaded"
       end
       unless function_exported?(unquote(implementation), :output, 2) do
-        raise "The specified module does not have the required output/2 function!"
+        raise "The specified outgoing module does not have the required output/2 function!"
       end
 
       @outgoings [{unquote(implementation), unquote(parameters)} | @outgoings]
