@@ -1,4 +1,6 @@
 defmodule Annoyer.Http.RootPlug do
+  @behaviour Annoyer.Incoming
+
   use Plug.Router
   require Logger
 
@@ -13,6 +15,12 @@ defmodule Annoyer.Http.RootPlug do
   plug(:dispatch)
   plug(Plug.Parsers, parsers: [:json], pass: ["application/json"], json_decoder: Jason)
 
+  @impl Annoyer.Incoming
+  def configure(_params) do
+    # No additional configuration supported yet.
+  end
+
+  @impl Plug
   def init(_options) do
     # todo get the port here?
     Logger.info("Started HTTP Server on :8080")

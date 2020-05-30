@@ -2,15 +2,31 @@ defmodule Annoyer.Channel do
   @doc "Imports any necessary modules for simple usage."
   defmacro __using__(_opts) do
     quote do
-      import Annoyer.{Channel, Annoyence, Filter, Outgoing}
+      import Annoyer.{Channel, Annoyence, Filter, Outgoing, Incoming}
 
       # Save filters and outgoings in module attributes
       @topics []
       @filters []
+      @configs []
       @outgoings []
 
       # Generate the final "__process_channel__"-method
       @before_compile Annoyer.Channel
+    end
+  end
+
+  defmacro configure(implementation, parameters \\ []) do
+    quote location: :keep do
+      unquoted_impl = unquote(implementation)
+      with {:error, reason} <- Code.ensure_compiled(unquoted_impl) do
+        raise "The specified incoming module #{unquoted_impl} couldn't be loaded: #{reason}"
+      end
+
+      unless function_exported?(unquoted_impl, :configure, 1) do
+        raise "The specified incoming module #{unquoted_impl} does not have the required configure/1 function!"
+      end
+
+      @configs [{unquoted_impl, unquote(parameters)} | @configs]
     end
   end
 
@@ -60,6 +76,10 @@ defmodule Annoyer.Channel do
 
       def __subscribed_topics__ do
         @topics
+      end
+
+      def __configure_channel__ do
+        Enum.each(@configs, fn {incoming, params} -> incoming.configure(params) end)
       end
 
       def __process_channel__(annoyence) do
