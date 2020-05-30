@@ -3,6 +3,7 @@ defmodule Annoyer.Channel do
   defmacro __using__(_opts) do
     quote do
       import Annoyer.{Channel, Annoyence, Filter, Outgoing, Incoming}
+      require Logger
 
       # Save filters and outgoings in module attributes
       @topics []
@@ -85,12 +86,19 @@ defmodule Annoyer.Channel do
       def __process_channel__(annoyence) do
         # Execute all filters
         filtered =
-          Enum.reduce(@filters_reversed, annoyence, fn {filter, params}, acc ->
-            filter.filter(params, acc)
+          Enum.reduce_while(@filters_reversed, annoyence, fn {filter, params}, acc ->
+            case filter.filter(params, acc) do
+              {:ok, result} -> {:cont, result}
+              :drop -> 
+                Logger.info("#{filter} dropped annoyence on \"#{annoyence.topic}\" topic")
+                {:halt, nil}
+            end
           end)
 
-        # Execute all outgoings
-        Enum.each(@outgoings, fn {out, params} -> out.output(params, filtered) end)
+        # Execute all outgoings if annoyence wasn't dropped
+        unless is_nil(filtered) do
+          Enum.each(@outgoings, fn {out, params} -> out.output(params, filtered) end)
+        end
       end
     end
   end
