@@ -3,7 +3,7 @@ defmodule Annoyer.Channel.Second do
 
   topic("info")
 
-  filter(Annoyer.Filter.TextManipulate, prepend: "Second: ")
+  transform(Annoyer.Transform.TextManipulate, prepend: "Second: ")
 
   outgoing(Annoyer.Outgoing.Console)
 end
