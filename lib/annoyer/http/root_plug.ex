@@ -10,10 +10,10 @@ defmodule Annoyer.Http.RootPlug do
 
   use Plug.ErrorHandler
 
+  plug(Plug.Parsers, parsers: [:json], pass: ["application/json"], json_decoder: Jason)
   plug(Plug.Logger)
   plug(:match)
   plug(:dispatch)
-  plug(Plug.Parsers, parsers: [:json], pass: ["application/json"], json_decoder: Jason)
 
   @impl Annoyer.Incoming
   def configure(_params) do
@@ -31,10 +31,11 @@ defmodule Annoyer.Http.RootPlug do
     conn |> put_resp_content_type("text/plain") |> send_resp(200, "Hello from Annoyer")
   end
 
-  post "/send/:topic/:message" do
-    # TODO Parse body, take "attachaments"-object to attachments map.
-    annoyence = %Annoyer.Annoyence{topic: topic, content: message,
-      meta: %{source: "rest"}
+  post "/send/:topic" do
+    message = Map.get(conn.body_params, "message", "")
+    attachment = Map.get(conn.body_params, "attachments", %{})
+    annoyence = %Annoyer.Annoyence{
+      topic: topic, content: message, meta: %{source: "rest"}, attachments: attachment
     }
 
     case Annoyer.Router.process_incoming(annoyence) do
