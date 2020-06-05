@@ -31,9 +31,11 @@ defmodule Annoyer.Http.RootPlug do
     conn |> put_resp_content_type("text/plain") |> send_resp(200, "Hello from Annoyer")
   end
 
-  # todo message via body
   post "/send/:topic/:message" do
-    annoyence = %Annoyer.Annoyence{topic: topic, content: message}
+    # TODO Parse body, take "attachaments"-object to attachments map.
+    annoyence = %Annoyer.Annoyence{topic: topic, content: message,
+      meta: %{source: "rest"}
+    }
 
     case Annoyer.Router.process_incoming(annoyence) do
       :ok ->
