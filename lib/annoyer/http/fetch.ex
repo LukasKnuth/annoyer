@@ -75,7 +75,6 @@ defmodule Annoyer.Http.Fetch do
     end
 
     def create_dispatch_annoyences(%{topic: topic}, response) do
-      IO.puts "Dispatching stuff to #{topic}"
       annoyence = %Annoyer.Annoyence{
         topic: topic, content: "Fetched from asd", meta: %{source: "fetch"}, attachments: response
       }
