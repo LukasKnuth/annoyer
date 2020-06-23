@@ -40,7 +40,9 @@ defmodule Annoyer.Http.Fetch.Request do
   end
 
   def fetch(%{body_type: :json} = config) do
-    # todo run as above, just without JSON_PATH
+    with {:ok, body} <- http_request(config),
+         {:ok, parsed} <- Jason.decode(body),
+         do: {:ok, to_annoyence(config, parsed)}
   end
 
   def fetch(%{body_type: :xml, path: path} = config) do
