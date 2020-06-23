@@ -14,6 +14,7 @@ defmodule Annoyer.Router do
     modules =
       Enum.reduce(channels, %{}, fn channel, acc ->
         channel.__configure_channel__()
+
         Enum.reduce(channel.__subscribed_topics__, acc, fn topic, routes ->
           Map.update(routes, topic, [channel], &[channel | &1])
         end)

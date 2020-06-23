@@ -19,6 +19,7 @@ defmodule Annoyer.Channel do
   defmacro configure(implementation, parameters \\ []) do
     quote location: :keep do
       unquoted_impl = unquote(implementation)
+
       with {:error, reason} <- Code.ensure_compiled(unquoted_impl) do
         raise "The specified incoming module #{unquoted_impl} couldn't be loaded: #{reason}"
       end
@@ -40,6 +41,7 @@ defmodule Annoyer.Channel do
   defmacro transform(implementation, parameters \\ []) do
     quote location: :keep do
       unquoted_impl = unquote(implementation)
+
       with {:error, reason} <- Code.ensure_compiled(unquoted_impl) do
         raise "The specified transform module #{unquoted_impl} couldn't be loaded: #{reason}"
       end
@@ -57,6 +59,7 @@ defmodule Annoyer.Channel do
   defmacro outgoing(implementation, parameters \\ []) do
     quote location: :keep do
       unquoted_impl = unquote(implementation)
+
       with {:error, reason} <- Code.ensure_compiled(unquoted_impl) do
         raise "The specified outgoing module #{unquoted_impl} couldn't be loaded: #{reason}"
       end
@@ -88,8 +91,10 @@ defmodule Annoyer.Channel do
         transformed =
           Enum.reduce_while(@transforms_reversed, annoyence, fn {transform, params}, acc ->
             case transform.transform(params, acc) do
-              {:ok, result} -> {:cont, result}
-              :drop -> 
+              {:ok, result} ->
+                {:cont, result}
+
+              :drop ->
                 Logger.info("#{transform} dropped annoyence on \"#{annoyence.topic}\" topic")
                 {:halt, nil}
             end

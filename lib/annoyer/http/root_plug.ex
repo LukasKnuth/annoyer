@@ -34,8 +34,12 @@ defmodule Annoyer.Http.RootPlug do
   post "/send/:topic" do
     message = Map.get(conn.body_params, "message", "")
     attachment = Map.get(conn.body_params, "attachments", %{})
+
     annoyence = %Annoyer.Annoyence{
-      topic: topic, content: message, meta: %{source: "rest"}, attachments: attachment
+      topic: topic,
+      content: message,
+      meta: %{source: "rest"},
+      attachments: attachment
     }
 
     case Annoyer.Router.process_incoming(annoyence) do
