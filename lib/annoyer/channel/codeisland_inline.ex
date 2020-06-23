@@ -10,7 +10,7 @@ defmodule Annoyer.Channel.CodeislandInline do
     interval: 20
   )
 
-  topic("codeisland_inline")
+  topic "codeisland_inline"
 
   def find_ffmpeg(annoyence) do
     any = fn :get, data, next -> Enum.map(data, next) end
@@ -18,9 +18,9 @@ defmodule Annoyer.Channel.CodeislandInline do
     Enum.all?(tags, fn tag -> tag != "ffmpeg" end)
   end
 
-  transform(Annoyer.Transform.Drop, condition: &__MODULE__.find_ffmpeg/1)
+  transform Annoyer.Transform.Drop, condition: &__MODULE__.find_ffmpeg/1
 
   # todo now, filter all that have already been published...
 
-  outgoing(Annoyer.Outgoing.Console)
+  outgoing Annoyer.Outgoing.Console
 end

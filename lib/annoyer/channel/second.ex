@@ -1,9 +1,9 @@
 defmodule Annoyer.Channel.Second do
   use Annoyer.Channel
 
-  topic("info")
+  topic "info"
 
-  transform(Annoyer.Transform.TextManipulate, prepend: "Second: ")
+  transform Annoyer.Transform.TextManipulate, prepend: "Second: "
 
-  outgoing(Annoyer.Outgoing.Console)
+  outgoing Annoyer.Outgoing.Console
 end
