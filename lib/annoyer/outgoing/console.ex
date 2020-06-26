@@ -13,7 +13,7 @@ defmodule Annoyer.Outgoing.Console do
     extras =
       keys
       |> Enum.map(fn path ->
-        data = Path.extract(path, annoyence, :not_found)
+        data = Path.get(path, annoyence, :not_found)
         "-> #{format_path(path)}: #{inspect data}"
       end)
       |> Enum.join("\n")
