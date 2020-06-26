@@ -20,5 +20,7 @@ defmodule Annoyer.Channel.CodeislandInline do
 
   # todo now, filter all that have already been published...
 
-  outgoing Annoyer.Outgoing.Console, keys: [[:attachments, :json, "title"], [:attachments, :json, "tags"], [:meta, :source_url]]
+  transform Annoyer.Transform.ToString, sources: [[:attachments, :json, "title"], [:attachments, :json, "url"]], join: " -> "
+
+  outgoing Annoyer.Outgoing.Console, keys: [[:attachments, :json, "tags"], [:meta, :source_url]]
 end
