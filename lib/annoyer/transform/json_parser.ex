@@ -38,6 +38,6 @@ defmodule Annoyer.Transform.JsonParser do
   end
 
   defp handle_parsed(_params, parsed, annoyence) do
-    %{annoyence | attachments: Map.put(annoyence.attachments, :json, parsed)}
+    Path.put([:attachments, :json], annoyence, parsed)
   end
 end
