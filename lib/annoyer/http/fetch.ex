@@ -15,26 +15,8 @@ defmodule Annoyer.Http.Fetch do
     {:noreply, state}
   end
 
-  defp put_config(%{topic: topic, url: url, json_path: path, interval: interval}, state) do
-    config = %{topic: topic, url: url, body_type: :json, path: path, interval: interval}
-    schedule_interval(config)
-    Map.put(state, url, config)
-  end
-
-  defp put_config(%{topic: topic, url: url, xml_path: path, interval: interval}, state) do
-    config = %{topic: topic, url: url, body_type: :xml, path: path, interval: interval}
-    schedule_interval(config)
-    Map.put(state, url, config)
-  end
-
-  defp put_config(%{topic: topic, url: url, body_type: :json, interval: interval}, state) do
-    config = %{topic: topic, url: url, body_type: :json, interval: interval}
-    schedule_interval(config)
-    Map.put(state, url, config)
-  end
-
-  defp put_config(%{topic: topic, url: url, body_type: :xml, interval: interval}, state) do
-    config = %{topic: topic, url: url, body_type: :xml, interval: interval}
+  defp put_config(%{topic: topic, url: url, interval: interval}, state) do
+    config = %{topic: topic, url: url, interval: interval}
     schedule_interval(config)
     Map.put(state, url, config)
   end
@@ -97,8 +79,7 @@ defmodule Annoyer.Http.Fetch do
       # Either we we're successful, or there was an error _this time_ and we'd like to retry. todo implement error count and exponential back-off!
       {:error, error} ->
         Logger.error(
-          "Error processing fetch on topic #{config["topic"]} for #{url}. Rescheduling...",
-          error
+          "Error processing fetch on topic #{config["topic"]} for #{url}. Rescheduling... #{inspect(error)}"
         )
 
         schedule_interval(config)

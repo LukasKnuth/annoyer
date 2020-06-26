@@ -17,39 +17,18 @@ defmodule Annoyer.Http.Fetch.Request do
 
   @spec to_annoyence(config :: map(), response :: list() | map()) ::
           Annoyence.t() | list(Annoyence.t())
-  defp to_annoyence(config, response) when is_list(response) do
-    Enum.map(response, fn res -> to_annoyence(config, res) end)
-  end
-
-  defp to_annoyence(%{topic: topic}, response) do
-    # todo set content to something useful!
+  defp to_annoyence(%{topic: topic, url: url}, body) do
     %Annoyer.Annoyence{
       topic: topic,
-      content: "Fetched from asd",
-      meta: %{source: "fetch"},
-      attachments: response
+      content: "Fetched from #{url}",
+      meta: %{source: __MODULE__, source_url: url},
+      attachments: %{fetch_body: body}
     }
   end
 
-  @spec fetch(config :: map()) :: {:ok, Annoyence.t() | list(Annoyence.t())} | {:error, any}
-  def fetch(%{body_type: :json, path: path} = config) do
+  @spec fetch(config :: map()) :: {:ok, Annoyence.t()} | {:error, any}
+  def fetch(config) do
     with {:ok, body} <- http_request(config),
-         {:ok, parsed} <- Jason.decode(body),
-         {:ok, matches} <- ExJSONPath.eval(parsed, path),
-         do: {:ok, to_annoyence(config, matches)}
-  end
-
-  def fetch(%{body_type: :json} = config) do
-    with {:ok, body} <- http_request(config),
-         {:ok, parsed} <- Jason.decode(body),
-         do: {:ok, to_annoyence(config, parsed)}
-  end
-
-  def fetch(%{body_type: :xml, path: path} = config) do
-    # todo run GET, XML-path on result
-  end
-
-  def fetch(%{body_type: :xml} = config) do
-    # todo run GET, without XML-path
+         do: {:ok, to_annoyence(config, body)}
   end
 end
