@@ -89,21 +89,21 @@ defmodule Annoyer.Channel do
       def __process_channel__(annoyence) do
         # Execute all transforms
         transformed =
-          Enum.reduce_while(@transforms_reversed, annoyence, fn {transform, params}, acc ->
-            case transform.transform(params, acc) do
-              {:ok, result} ->
-                {:cont, result}
-
-              :drop ->
-                Logger.info("#{transform} dropped annoyence on \"#{annoyence.topic}\" topic")
-                {:halt, nil}
-            end
+          Enum.reduce_while(@transforms_reversed, [annoyence], fn {transform, params}, acc ->
+            transformed = Enum.reduce(acc, [], fn e, acc ->
+              case transform.transform(params, e) do
+                {:ok, result} when is_list(result) -> result ++ acc
+                {:ok, result} -> [result | acc]
+                :drop ->
+                  Logger.info("#{transform} dropped annoyence on \"#{e.topic}\" topic")
+                  acc
+              end
+            end)
+            if Enum.empty?(transformed), do: {:halt, []}, else: {:cont, transformed}
           end)
 
         # Execute all outgoings if annoyence wasn't dropped
-        unless is_nil(transformed) do
-          Enum.each(@outgoings, fn {out, params} -> out.output(params, transformed) end)
-        end
+        Enum.each(@outgoings, fn {out, params} -> Enum.each(transformed, &out.output(params, &1)) end)
       end
     end
   end

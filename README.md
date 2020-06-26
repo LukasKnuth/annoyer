@@ -1,24 +1,19 @@
 # Annoyer
 
-**TODO: Add description**
+Transports Annoyences (= Events) from one system to another, making in-flight changes to it.
 
-## Installation
+# Specification
 
-If [available in Hex](https://hex.pm/docs/publish), the package can be installed
-by adding `annoyer` to your list of dependencies in `mix.exs`:
+**Note:** This is a work-in-progress and will be updated sporadically!
 
-```elixir
-def deps do
-  [
-    {:annoyer, "~> 0.1.0"}
-  ]
-end
-```
+## Transforms
 
-Documentation can be generated with [ExDoc](https://github.com/elixir-lang/ex_doc)
-and published on [HexDocs](https://hexdocs.pm). Once published, the docs can
-be found at [https://hexdocs.pm/annoyer](https://hexdocs.pm/annoyer).
-
+1. A Transform must receive a _single_ Annyoence to work with.
+2. A Transform may return a new and altered Annoyence.
+3. A Transform may return the Annoyence without making any changes to it. There is no special indication for this case.
+4. A Transform may drop the Annoyence to remove it from further processing by the Channel.
+5. A Transform must drop the Annoyence if it can't complete it's job and there is no suitable fallback.
+    * When building Channels, this specifically allows users to depend on a Transform having done it's job as expected and subsequent Transforms to not be called with invalid/unexpected Annoyences.
 
 # Idea: Authentication
 
