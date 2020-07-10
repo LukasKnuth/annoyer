@@ -27,7 +27,8 @@ defmodule Annoyer.MixProject do
       {:plug_cowboy, "~> 2.3"},
       {:jason, "~> 1.2"},
       {:exjsonpath, "~> 0.1"},
-      {:httpoison, "~> 1.6"}
+      {:httpoison, "~> 1.6"},
+      {:meeseeks, "~> 0.15.1"}
     ]
   end
 end
